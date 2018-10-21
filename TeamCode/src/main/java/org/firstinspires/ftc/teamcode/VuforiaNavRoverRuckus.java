@@ -92,7 +92,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 @TeleOp(name="Concept: Vuforia Rover Nav", group ="Concept")
-@Disabled
+
 public class VuforiaNavRoverRuckus extends LinearOpMode {
 
     /*
@@ -117,7 +117,7 @@ public class VuforiaNavRoverRuckus extends LinearOpMode {
 
     // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
     // Valid choices are:  BACK or FRONT
-    private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
+    private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = FRONT;
 
     private OpenGLMatrix lastLocation = null;
     private boolean targetVisible = false;
