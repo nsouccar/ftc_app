@@ -1,3 +1,6 @@
+
+
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -72,10 +75,21 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 @TeleOp(name="Linear OpMode", group="Linear Opmode")
 
+
+@Disabled
 public class OpMode extends LinearOpMode {
+
     // vuforia members
     private static final String VUFORIA_KEY = "ARYJT0b/////AAAAGYhN7cav+UUXqkMo7uS9Mswt0KxiQ3Sp/OVgoLfwHMP74uJpsnWLAXQLoXs0AIcpgC2IiJIov+JwDwrMwujShtlUastkjxWBAXLvJ6drxd811wEZGqBtBeOC6ObFPqG+W41u3D0fWJjsU4qG3S6NdgIAv6Q4T1OGH6Q6jOpatGlpEyhclM0Rk+vs77zaVzgBgZmcCa+tTqOpu0hhxqyxMvPv3Ehn0sgbF1KTfba/QQfxEjpsqJRyA5r7HfNNfg/31xdLLtzQXy28id0EXqPkB2iZ39fxsX0XcbKRWd7pq5uXqfvwJm4EvsKFLOz0eJhJBW+2vlCy5jrdehA7wH+pOnQTx3SQmbyqlr8KehWPWL1X";
 
+
+    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
@@ -121,11 +135,25 @@ public class OpMode extends LinearOpMode {
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
+
+
         //vuforia code
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         position = new RobotPositionTest(cameraMonitorViewId);
         //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+       leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path0",  "Starting at %7d :%7d",
+                leftDrive.getCurrentPosition(),
+                rightDrive.getCurrentPosition());
+        telemetry.update();
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -135,8 +163,9 @@ public class OpMode extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            System.out.println("hi");
+            int leftEncoderCount = leftDrive.getCurrentPosition();
+            int rightEncoderCount = rightDrive.getCurrentPosition();
+            //System.out.println("hi");
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
@@ -154,36 +183,53 @@ public class OpMode extends LinearOpMode {
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            leftPower = -gamepad1.left_stick_y;
-            rightPower = -gamepad1.right_stick_y;
+            leftPower = gamepad1.left_stick_y;
+            rightPower = gamepad1.right_stick_y;
 
             // Send calculated power to wheels
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
 
             if (gamepad1.a) {
+
                 System.out.println("hallelulha");
                 telemetry.addData("a pressed", "Run Time: " + runtime.toString());
-                String update = position.runVuforiaTracker(5);
-                //sleep(5000);
-                telemetry.addData("tracker update", update);
+
+                    String update = position.runVuforiaTracker(getRuntime());
+                   /*if(update != "Visible Target: none" ) {
+                        telemetry.addData("tracker update", update);
+                        //i = 5;
+                    }else{
+                        telemetry.addData("help", "me");
+                    }
+
+                    */
+
+                    //sleep(5000);
+                    telemetry.addData("tracker update", update);
+
+
 
                // telemetry.update();
-
-
-
-
-
                 // check all the trackable target to see which one (if any) is visible.
+                }
 
-            }
+                //if(gamepad1.b) {
+                  //  AutonomousSteps steps = new AutonomousSteps()
+                //}
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("leftDriveEcoder", leftEncoderCount/COUNTS_PER_INCH);
+            telemetry.addData("rightDriveencoder", rightEncoderCount/COUNTS_PER_INCH);
             telemetry.update();
+
+
+            }
+
+
         }
     }
-}
 

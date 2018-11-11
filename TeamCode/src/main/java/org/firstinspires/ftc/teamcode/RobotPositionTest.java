@@ -31,9 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -49,7 +46,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
 
 import java.util.ArrayList;
@@ -72,15 +68,15 @@ import java.util.List;
 
 
 
-public class RobotPositionTest  {
+public class RobotPositionTest {
 
     // Declare OpMode members.
     private static final String VUFORIA_KEY = "ARYJT0b/////AAAAGYhN7cav+UUXqkMo7uS9Mswt0KxiQ3Sp/OVgoLfwHMP74uJpsnWLAXQLoXs0AIcpgC2IiJIov+JwDwrMwujShtlUastkjxWBAXLvJ6drxd811wEZGqBtBeOC6ObFPqG+W41u3D0fWJjsU4qG3S6NdgIAv6Q4T1OGH6Q6jOpatGlpEyhclM0Rk+vs77zaVzgBgZmcCa+tTqOpu0hhxqyxMvPv3Ehn0sgbF1KTfba/QQfxEjpsqJRyA5r7HfNNfg/31xdLLtzQXy28id0EXqPkB2iZ39fxsX0XcbKRWd7pq5uXqfvwJm4EvsKFLOz0eJhJBW+2vlCy5jrdehA7wH+pOnQTx3SQmbyqlr8KehWPWL1X";
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
-    private static final float mmTargetHeight   = (6) * mmPerInch; // the height of the center of the target image above the floor
+    private static final float mmPerInch = 25.4f;
+    private static final float mmFTCFieldWidth = (12 * 6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
+    private static final float mmTargetHeight = (6) * mmPerInch; // the height of the center of the target image above the floor
     private ElapsedTime runtime = null;
 
     // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
@@ -104,7 +100,7 @@ public class RobotPositionTest  {
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CAMERA_CHOICE;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
-       // parameters = new VuforiaLocalizer.Parameters();
+        // parameters = new VuforiaLocalizer.Parameters();
 
         // Load the data sets that for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
@@ -189,11 +185,7 @@ public class RobotPositionTest  {
         backSpace.setLocation(backSpaceLocationOnField);
 
 
-
-
         //  Instantiate the Vuforia engine
-
-
 
 
         /**
@@ -237,32 +229,35 @@ public class RobotPositionTest  {
 
     }
 
-     public String runVuforiaTracker(int sec) {
-         System.out.println("tracker running");
+    public String runVuforiaTracker(double sec) {
+        System.out.println("tracker running");
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
 
-
         String update = "";
-
-
-
-
+        double [] coordinates;
+        int i = 5;
 
         /** Start tracking the data sets we care about. */
         targetsRoverRuckus.activate();
         //while(runtime.seconds() < (runtime.seconds() + sec)) {
-            // check all the trackable target to see which one (if any) is visible.
-            targetVisible = false;
+        // check all the trackable target to see which one (if any) is visible.
+        targetVisible = false;
+        while (i == 5) {
+            System.out.println("yo");
+
             for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+
+                    targetVisible = true;
+                    i = 6;
 
                     // getUpdatedRobotLocation() will return null if no new information is available since
                     // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {
                         lastLocation = robotLocationTransform;
                     }
@@ -270,29 +265,37 @@ public class RobotPositionTest  {
                 }
             }
 
-            // Provide feedback as to where the robot i s located (if we know).
+        }
+        // Provide feedback as to where the robot i s located (if we know).
+
             if (targetVisible) {
+                System.out.println("yommmm");
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
+
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                update = "Pos: (x:" + translation.get(0)/ mmPerInch + "y:"  + translation.get(1)/ mmPerInch + "z:" + translation.get(2)/ mmPerInch + ")"
-                + "Rot: (x:" + rotation.firstAngle + "y:" + rotation.secondAngle + "z:" + rotation.thirdAngle + ")";
-
-            }
-            else {
-
-                update = "Visible Target: none";
-            }
-        //}
-
-        targetsRoverRuckus.deactivate();
+                update = "Pos: (x:" + translation.get(0) / mmPerInch + "y:" + translation.get(1) / mmPerInch + "z:" + translation.get(2) / mmPerInch + ")"
+                        + "Rot: (x:" + rotation.firstAngle + "y:" + rotation.secondAngle + "z:" + rotation.thirdAngle + ")";
+                System.out.println(update + "whatsup");
 
 
+                //i = 6;
 
-            return update;
-        }
+                return update;
+                }
+
+            targetsRoverRuckus.deactivate();
 
 
-        }
+
+        return update;
+    }
+
+}
+
+
+
+
+
 
 
