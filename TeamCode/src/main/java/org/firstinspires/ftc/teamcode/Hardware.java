@@ -43,7 +43,6 @@ public class Hardware
     public DcMotor  collectorDrum    = null;
     public DcMotor  lift        = null;
     public DcMotor  scoopArm    = null;
-    public Servo    hook        = null;
     public Servo    scoopDoor   = null;
 
     public static final double MID_SERVO       =  0.5 ;
@@ -107,8 +106,8 @@ public class Hardware
         scoopArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        hook  = hwMap.get(Servo.class, "hook");
-        hook.setPosition(MID_SERVO);
+        scoopDoor  = hwMap.get(Servo.class, "scoop_Door");
+        scoopDoor.setPosition(MID_SERVO);
     }
  }
 
