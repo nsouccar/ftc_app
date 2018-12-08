@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -43,7 +44,7 @@ public class Hardware
     public DcMotor  collectorDrum    = null;
     public DcMotor  lift        = null;
     public DcMotor  scoopArm    = null;
-    public Servo    hook        = null;
+    public CRServo  latch       = null;
     public Servo    scoopDoor   = null;
 
     public static final double MID_SERVO       =  0.5 ;
@@ -107,8 +108,8 @@ public class Hardware
         scoopArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        hook  = hwMap.get(Servo.class, "hook");
-        hook.setPosition(MID_SERVO);
+        latch  = hwMap.get(CRServo.class, "latch");
+        latch.setPower(0.);
     }
  }
 

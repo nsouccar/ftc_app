@@ -39,8 +39,6 @@ public class Teleop extends LinearOpMode {
 
     /* Declare OpMode members. */
     Hardware robot           = new Hardware();   // Use a Pushbot's hardware
-    double          hookOffset      = 0;                       // Servo mid position
-    final double    HOOK_SPEED      = 0.02 ;                   // sets rate to move servo
 
     @Override
     public void runOpMode() {
@@ -69,15 +67,13 @@ public class Teleop extends LinearOpMode {
             robot.leftDrive.setPower(left);
             robot.rightDrive.setPower(right);
 
-            // Use gamepad left & right Bumpers to open and close the claw
+            // Use gamepad left & right Bumpers to open and close the latch
             if (gamepad1.right_bumper)
-                hookOffset += HOOK_SPEED;
+                robot.latch.setPower(.2);
             else if (gamepad1.left_bumper)
-                hookOffset -= HOOK_SPEED;
-
-            // Move both servos to new position.  Assume servos are mirror image of each other.
-            hookOffset = Range.clip(hookOffset, -0.5, 0.5);
-            robot.hook.setPosition(robot.MID_SERVO + hookOffset);
+                robot.latch.setPower(-.2);
+            else
+                robot.latch.setPower(0.);
 
             // Use gamepad buttons to move collector arm up (Y) and down (A)
             if (gamepad1.y)
@@ -122,7 +118,6 @@ public class Teleop extends LinearOpMode {
                 robot.scoopArm.setPower(0.0);
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("hook",  "Offset = %.2f", hookOffset);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
