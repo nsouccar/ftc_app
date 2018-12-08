@@ -76,10 +76,18 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 @TeleOp(name="Linear OpMode", group="Linear Opmode")
 
 
-@Disabled
+
 public class OpMode extends LinearOpMode {
 
     // vuforia members
+
+    List<Double>            moveInfo = new ArrayList<Double>();
+    AutonomousSteps         autonomousSteps;
+    Integer                 numtOfMoves;
+    Double                  LEncoderCount;
+    Double                  REncoderCount;
+    Double                  currTime;
+    Double                  currAngle;
     private static final String VUFORIA_KEY = "ARYJT0b/////AAAAGYhN7cav+UUXqkMo7uS9Mswt0KxiQ3Sp/OVgoLfwHMP74uJpsnWLAXQLoXs0AIcpgC2IiJIov+JwDwrMwujShtlUastkjxWBAXLvJ6drxd811wEZGqBtBeOC6ObFPqG+W41u3D0fWJjsU4qG3S6NdgIAv6Q4T1OGH6Q6jOpatGlpEyhclM0Rk+vs77zaVzgBgZmcCa+tTqOpu0hhxqyxMvPv3Ehn0sgbF1KTfba/QQfxEjpsqJRyA5r7HfNNfg/31xdLLtzQXy28id0EXqPkB2iZ39fxsX0XcbKRWd7pq5uXqfvwJm4EvsKFLOz0eJhJBW+2vlCy5jrdehA7wH+pOnQTx3SQmbyqlr8KehWPWL1X";
 
 
@@ -165,6 +173,11 @@ public class OpMode extends LinearOpMode {
         while (opModeIsActive()) {
             int leftEncoderCount = leftDrive.getCurrentPosition();
             int rightEncoderCount = rightDrive.getCurrentPosition();
+
+            ElapsedTime holdTimer = new ElapsedTime();
+
+            // keep looping while we have time remaining.
+            holdTimer.reset();
             //System.out.println("hi");
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
@@ -195,7 +208,34 @@ public class OpMode extends LinearOpMode {
                 System.out.println("hallelulha");
                 telemetry.addData("a pressed", "Run Time: " + runtime.toString());
 
-                    String update = position.runVuforiaTracker(getRuntime());
+                    numtOfMoves   += 1;
+                    currTime      = holdTimer.time();
+                    LEncoderCount = leftEncoderCount/COUNTS_PER_INCH;
+                    REncoderCount = rightEncoderCount/COUNTS_PER_INCH;
+                    //currAngle     = globalAngle;
+                    moveInfo.add(LEncoderCount);
+                    moveInfo.add(REncoderCount);
+                    moveInfo.add(currTime);
+                    moveInfo.add(currAngle);
+
+
+
+
+                // We record the sensor values because we will test them in more than
+                // one place with time passing between those places. See the lesson on
+                // Timing Considerations to know why.
+
+            }
+
+
+
+
+            // turn the motors off.
+            autonomousSteps = new AutonomousSteps(numtOfMoves, (ArrayList<Double>) moveInfo);
+            autonomousSteps.makeXML();
+
+
+            String update = position.runVuforiaTracker(getRuntime());
                    /*if(update != "Visible Target: none" ) {
                         telemetry.addData("tracker update", update);
                         //i = 5;
@@ -221,9 +261,9 @@ public class OpMode extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("leftDriveEcoder", leftEncoderCount/COUNTS_PER_INCH);
-            telemetry.addData("rightDriveencoder", rightEncoderCount/COUNTS_PER_INCH);
+            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("leftDriveEcoder", LEncoderCount/COUNTS_PER_INCH);
+            telemetry.addData("rightDriveencoder", REncoderCount/COUNTS_PER_INCH);
             telemetry.update();
 
 
@@ -231,5 +271,5 @@ public class OpMode extends LinearOpMode {
 
 
         }
-    }
+
 

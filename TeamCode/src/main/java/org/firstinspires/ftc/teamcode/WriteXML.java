@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import java.io.File;
 import java.lang.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,20 +17,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-public class AutonomousSteps {
-    static Integer numOfMoves;
+public class WriteXML {
+    static int numOfMoves;
     static ArrayList<Double> moveInfo;
 
 
 
-    public AutonomousSteps ( int numberOfMoves, ArrayList<Double> moveInfoArray ) {
+    public WriteXML( int numberOfMoves, ArrayList<Double> moveInfoArrayList ){
         this.numOfMoves = numberOfMoves;
-        System.out.println(this.numOfMoves);
-        this.moveInfo = moveInfoArray;
+        this.moveInfo = moveInfoArrayList;
         System.out.println(this.moveInfo);
 
     }
@@ -39,10 +33,15 @@ public class AutonomousSteps {
 
     public  void makeXML() {
 
+
+
         DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder icBuilder;
+        List listOfMoves;
+
 
         try {
+
             icBuilder = icFactory.newDocumentBuilder();
             Document doc = icBuilder.newDocument();
             Element mainRootElement = doc.createElementNS("Linear", "Moves");
@@ -53,28 +52,19 @@ public class AutonomousSteps {
 
 
             for(int i = 0; i < (numOfMoves * 4); i+= 4){
-                Node move = createMove(doc, Integer.toString(i), moveInfo.get(i),  moveInfo.get(i+ 1), moveInfo.get(i+ 2),moveInfo.get(i+ 3), i);
+                Node move = createMove(doc, Integer.toString(i/4), moveInfo.get(i + 0),  moveInfo.get(i+ 1), moveInfo.get(i+ 2),moveInfo.get(i+ 3), i);
                 mainRootElement.appendChild(move);
 
             }
 
             // output DOM XML to console
-            /*TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("s/sdcard/FIRST"));
-
-
-            System.out.println("\nXML DOM Created Successfully..");
-*/
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(doc);
-            StreamResult console = new StreamResult(System.out);
-            transformer.transform(source, console);
-
+            StreamResult result = new StreamResult(new File("/sdcard/FIRST"));
+            transformer.transform(source, result);
             System.out.println("\nXML DOM Created Successfully..");
 
         } catch (Exception e) {

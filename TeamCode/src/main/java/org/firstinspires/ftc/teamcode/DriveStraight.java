@@ -119,7 +119,7 @@ public class DriveStraight extends LinearOpMode {
 
         imu.initialize(parameters);
 
-        // Set PID proportional vΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩΩalue to start reducing power at about 50 degrees of rotation.
+        // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         pidRotate = new PIDController(.005, 0, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
@@ -143,7 +143,7 @@ public class DriveStraight extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-       leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
