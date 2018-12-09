@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -43,22 +44,29 @@ public class Hardware
     public DcMotor  collectorDrum    = null;
     public DcMotor  lift        = null;
     public DcMotor  scoopArm    = null;
+    public CRServo  latch       = null;
     public Servo    scoopDoor   = null;
-
-    public static final double MID_SERVO       =  0.5 ;
 
     public static final double COLLECTOR_UP_POWER    =  0.5 ;
     public static final double COLLECTOR_DOWN_POWER  = -0.25 ;
 
-    public static final double LIFT_UP_POWER    =  0.75 ;
-    public static final double LIFT_DOWN_POWER  = -0.75 ;
-
-    public static final double SCOOP_UP_POWER    =  0.25 ;
-    public static final double SCOOP_DOWN_POWER  =  -0.25 ;
-
     public static final double COLLECTOR_IN_POWER    =  0.75 ;
     public static final double COLLECTOR_OUT_POWER   =  -0.75 ;
 
+    public static final double LIFT_UP_POWER    =  0.75 ;
+    public static final double LIFT_DOWN_POWER  = -0.75 ;
+
+    public static final double LATCH_OPEN_POWER  =  0.6 ;
+    public static final double LATCH_CLOSE_POWER = -0.6 ;
+
+    public static final double SCOOP_UP_POWER    =  0.5 ;
+    public static final double SCOOP_DOWN_POWER  =  -0.5 ;
+
+    enum ScoopDoor { Closed, Gold, Open; }
+    ScoopDoor lastScoopDoorPosition = ScoopDoor.Open;
+    public static final double SCOOP_DOOR_CLOSED =  0.4 ;
+    public static final double SCOOP_DOOR_GOLD   =  0.5 ;
+    public static final double SCOOP_DOOR_OPEN   =  0.6 ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -87,6 +95,8 @@ public class Hardware
 
         collectorDrum.setDirection(DcMotor.Direction.REVERSE);
         lift.setDirection(DcMotor.Direction.REVERSE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        scoopArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         leftDrive.setPower(0);
@@ -106,8 +116,11 @@ public class Hardware
         scoopArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        scoopDoor  = hwMap.get(Servo.class, "scoop_Door");
-        scoopDoor.setPosition(MID_SERVO);
+        latch  = hwMap.get(CRServo.class, "latch");
+        latch.setPower(0.);
+        scoopDoor  = hwMap.get(Servo.class, "scoop_door");
+        scoopDoor.setPosition(SCOOP_DOOR_OPEN);
+
     }
  }
 
