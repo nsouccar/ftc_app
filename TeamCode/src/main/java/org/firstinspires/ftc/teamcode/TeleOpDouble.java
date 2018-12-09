@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.concurrent.TimeUnit;
-
 @TeleOp(name="TeleOpDouble", group="RB_rover-ruckus")
 
 public class TeleOpDouble extends LinearOpMode {
