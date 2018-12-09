@@ -77,7 +77,7 @@ public class Teleop extends LinearOpMode {
 
             // Move both servos to new position.  Assume servos are mirror image of each other.
             hookOffset = Range.clip(hookOffset, -0.5, 0.5);
-            robot.hook.setPosition(robot.MID_SERVO + hookOffset);
+            ///robot.hook.setPosition(robot.MID_SERVO + hookOffset);
 
             // Use gamepad buttons to move collector arm up (Y) and down (A)
             if (gamepad1.y)
