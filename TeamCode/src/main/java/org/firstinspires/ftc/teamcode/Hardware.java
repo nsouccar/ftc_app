@@ -43,9 +43,9 @@ public class Hardware
     public DcMotor  collectorArm     = null;
     public DcMotor  collectorDrum    = null;
     public DcMotor  lift        = null;
-    public DcMotor  scoopArm    = null;
+    public DcMotor  bucketArm    = null;
     public CRServo  latch       = null;
-    public Servo    scoopDoor   = null;
+    public Servo    bucketBox   = null;
 
     public static final double COLLECTOR_UP_POWER    =  0.5 ;
     public static final double COLLECTOR_DOWN_POWER  = -0.25 ;
@@ -59,14 +59,12 @@ public class Hardware
     public static final double LATCH_OPEN_POWER  =  0.6 ;
     public static final double LATCH_CLOSE_POWER = -0.6 ;
 
-    public static final double SCOOP_UP_POWER    =  0.5 ;
-    public static final double SCOOP_DOWN_POWER  =  -0.5 ;
+    public static final double BUCKET_UP_POWER    =  0.5 ;
+    public static final double BUCKET_DOWN_POWER  =  -0.5 ;
 
-    enum ScoopDoor { Closed, Gold, Open; }
-    ScoopDoor lastScoopDoorPosition = ScoopDoor.Open;
-    public static final double SCOOP_DOOR_CLOSED =  0.4 ;
-    public static final double SCOOP_DOOR_GOLD   =  0.5 ;
-    public static final double SCOOP_DOOR_OPEN   =  0.6 ;
+    public static final double BUCKET_DOOR_CLOSED =  0.4 ;
+    public static final double BUCKET_DOOR_GOLD   =  0.5 ;
+    public static final double BUCKET_DOOR_OPEN   =  0.6 ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -88,7 +86,7 @@ public class Hardware
         collectorArm = hwMap.get(DcMotor.class, "collector_arm");
         collectorDrum = hwMap.get(DcMotor.class, "collector_drum");
         lift = hwMap.get(DcMotor.class, "lift");
-        scoopArm = hwMap.get(DcMotor.class, "scoop_arm");
+        bucketArm = hwMap.get(DcMotor.class, "bucket_arm");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -96,7 +94,7 @@ public class Hardware
         collectorDrum.setDirection(DcMotor.Direction.REVERSE);
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        scoopArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bucketArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         leftDrive.setPower(0);
@@ -104,7 +102,7 @@ public class Hardware
         collectorArm.setPower(0);
         collectorDrum.setPower(0);
         lift.setPower(0);
-        scoopArm.setPower(0);
+        bucketArm.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -113,13 +111,13 @@ public class Hardware
         collectorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         collectorDrum.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        scoopArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bucketArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         latch  = hwMap.get(CRServo.class, "latch");
         latch.setPower(0.);
-        scoopDoor  = hwMap.get(Servo.class, "scoop_door");
-        scoopDoor.setPosition(SCOOP_DOOR_OPEN);
+        bucketBox  = hwMap.get(Servo.class, "bucket_box");
+        bucketBox.setPosition(BUCKET_DOOR_OPEN);
 
     }
  }
