@@ -31,14 +31,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleOp", group="TechnoChix")
+import java.util.concurrent.TimeUnit;
 
-public class Teleop extends LinearOpMode {
+@TeleOp(name="TeleOpSingle", group="TechnoChix")
+
+public class TeleOpSingle extends LinearOpMode {
 
     /* Declare OpMode members. */
-    Hardware robot           = new Hardware();   // Use a Pushbot's hardware
+    private ElapsedTime runtime = new ElapsedTime();
+    private static long X_DEBOUNCE = 20;
+    long lastX;
+    Hardware robot           = new Hardware();
 
     @Override
     public void runOpMode() {
@@ -56,6 +61,8 @@ public class Teleop extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        runtime.reset();
+        lastX = runtime.now(TimeUnit.MILLISECONDS);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -69,9 +76,9 @@ public class Teleop extends LinearOpMode {
 
             // Use gamepad left & right Bumpers to open and close the latch
             if (gamepad1.right_bumper)
-                robot.latch.setPower(.2);
+                robot.latch.setPower(robot.LATCH_OPEN_POWER);
             else if (gamepad1.left_bumper)
-                robot.latch.setPower(-.2);
+                robot.latch.setPower(robot.LATCH_CLOSE_POWER);
             else
                 robot.latch.setPower(0.);
 
@@ -83,23 +90,26 @@ public class Teleop extends LinearOpMode {
             else
                 robot.collectorArm.setPower(0.0);
 
-            if (false) {
-                // Use gamepad buttons to spin collector drum in (X) and out (B)
-                if (gamepad1.x)
-                    robot.collectorDrum.setPower(robot.COLLECTOR_IN_POWER);
-                else if (gamepad1.b)
-                    robot.collectorDrum.setPower(robot.COLLECTOR_OUT_POWER);
-                else
-                    robot.collectorDrum.setPower(0.0);
-            } else {
-                // Use gamepad triggers to spin collector drum in (left_trigger) and out (right_trigger)
-                if (gamepad1.left_trigger > 0.05)
-                    robot.collectorDrum.setPower(-gamepad1.left_trigger);
-                else if (gamepad1.right_trigger > 0.05)
-                    robot.collectorDrum.setPower(gamepad1.right_trigger);
-                else
-                    robot.collectorDrum.setPower(0.0);
-            }
+
+            // Use gamepad buttons to open/close scoop door in (X) and out (B)
+            if (gamepad1.x && (lastX + X_DEBOUNCE > runtime.now(TimeUnit.MILLISECONDS))) {
+                robot.scoopDoor.setPosition(
+                        robot.lastScoopDoorPosition == Hardware.ScoopDoor.Closed ?
+                        robot.SCOOP_DOOR_OPEN : robot.SCOOP_DOOR_OPEN );
+                robot.lastScoopDoorPosition =
+                        robot.lastScoopDoorPosition == Hardware.ScoopDoor.Closed ?
+                        Hardware.ScoopDoor.Open : Hardware.ScoopDoor.Closed;
+                lastX = runtime.now(TimeUnit.MILLISECONDS);
+            } else if (gamepad1.b)
+                robot.scoopDoor.setPosition(robot.SCOOP_DOOR_GOLD);
+
+            // Use gamepad triggers to spin collector drum in (left_trigger) and out (right_trigger)
+            if (gamepad1.left_trigger > 0.05)
+                robot.collectorDrum.setPower(-gamepad1.left_trigger);
+            else if (gamepad1.right_trigger > 0.05)
+                robot.collectorDrum.setPower(gamepad1.right_trigger);
+            else
+                robot.collectorDrum.setPower(0.0);
 
             // Use gamepad buttons to move lift up (dpad_up) and down (dpad_down)
             if (gamepad1.dpad_up)
