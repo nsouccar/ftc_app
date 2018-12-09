@@ -66,9 +66,9 @@ public class TeleOpDouble extends LinearOpMode {
 
             // Use gamepad triggers to spin collector drum in (right_trigger) and out (left_trigger)
             if (gamepad2.right_trigger > 0.05)
-                robot.collectorDrum.setPower(gamepad1.right_trigger);
+                robot.collectorDrum.setPower(gamepad2.right_trigger);
             else if (gamepad2.left_trigger > 0.05)
-                robot.collectorDrum.setPower(-gamepad1.left_trigger);
+                robot.collectorDrum.setPower(-gamepad2.left_trigger);
             else
                 robot.collectorDrum.setPower(0.0);
 
@@ -80,7 +80,7 @@ public class TeleOpDouble extends LinearOpMode {
             else
                 robot.bucketArm.setPower(0.0);
 
-            // Use gamepad bumpers to open(right) and close(left) scoop door and gold(y)
+            // Use gamepad bumpers to open(right) and close(left) bucket door and gold(y)
             if (gamepad2.right_bumper)
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_OPEN);
             else if (gamepad2.left_bumper)

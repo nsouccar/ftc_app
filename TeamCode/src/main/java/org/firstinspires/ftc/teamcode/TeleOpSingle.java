@@ -92,16 +92,12 @@ public class TeleOpSingle extends LinearOpMode {
 
 
             // Use gamepad buttons to open/close scoop door in (X) and out (B)
-            if (gamepad1.x && (lastX + X_DEBOUNCE > runtime.now(TimeUnit.MILLISECONDS))) {
-                robot.scoopDoor.setPosition(
-                        robot.lastScoopDoorPosition == Hardware.ScoopDoor.Closed ?
-                        robot.SCOOP_DOOR_OPEN : robot.SCOOP_DOOR_OPEN );
-                robot.lastScoopDoorPosition =
-                        robot.lastScoopDoorPosition == Hardware.ScoopDoor.Closed ?
-                        Hardware.ScoopDoor.Open : Hardware.ScoopDoor.Closed;
-                lastX = runtime.now(TimeUnit.MILLISECONDS);
-            } else if (gamepad1.b)
-                robot.scoopDoor.setPosition(robot.SCOOP_DOOR_GOLD);
+            if (gamepad2.right_bumper)
+                robot.bucketBox.setPosition(robot.BUCKET_DOOR_OPEN);
+            else if (gamepad2.left_bumper)
+                robot.bucketBox.setPosition(robot.BUCKET_DOOR_CLOSED);
+            else if (gamepad2.y)
+                robot.bucketBox.setPosition(robot.BUCKET_DOOR_GOLD);
 
             // Use gamepad triggers to spin collector drum in (left_trigger) and out (right_trigger)
             if (gamepad1.left_trigger > 0.05)
@@ -121,11 +117,11 @@ public class TeleOpSingle extends LinearOpMode {
 
             // Use gamepad buttons to move scoop up (dpad_right) and down (dpad_left)
             if (gamepad1.dpad_right)
-                robot.scoopArm.setPower(robot.SCOOP_UP_POWER);
+                robot.bucketArm.setPower(robot.BUCKET_UP_POWER);
             else if (gamepad1.dpad_left)
-                robot.scoopArm.setPower(robot.SCOOP_DOWN_POWER);
+                robot.bucketArm.setPower(robot.BUCKET_DOWN_POWER);
             else
-                robot.scoopArm.setPower(0.0);
+                robot.bucketArm.setPower(0.0);
 
             // Send telemetry message to signify robot running;
             telemetry.addData("left",  "%.2f", left);

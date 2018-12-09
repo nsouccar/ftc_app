@@ -62,9 +62,9 @@ public class Hardware
     public static final double BUCKET_UP_POWER    =  0.5 ;
     public static final double BUCKET_DOWN_POWER  =  -0.5 ;
 
-    public static final double BUCKET_DOOR_CLOSED =  0.4 ;
-    public static final double BUCKET_DOOR_GOLD   =  0.5 ;
-    public static final double BUCKET_DOOR_OPEN   =  0.6 ;
+    public static final double BUCKET_DOOR_CLOSED =  0.5 ;
+    public static final double BUCKET_DOOR_GOLD   =  0.8 ;
+    public static final double BUCKET_DOOR_OPEN   =  1.0 ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -115,8 +115,9 @@ public class Hardware
 
         // Define and initialize ALL installed servos.
         latch  = hwMap.get(CRServo.class, "latch");
-        latch.setPower(0.);
+        latch.setPower(0.0);
         bucketBox  = hwMap.get(Servo.class, "bucket_box");
+        bucketBox.setDirection(Servo.Direction.REVERSE);
         bucketBox.setPosition(BUCKET_DOOR_OPEN);
 
     }
