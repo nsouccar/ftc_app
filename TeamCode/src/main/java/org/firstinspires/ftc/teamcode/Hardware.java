@@ -47,8 +47,8 @@ public class Hardware
     public CRServo  latch       = null;
     public Servo    bucketBox   = null;
 
-    public static final double COLLECTOR_UP_POWER    =  0.5 ;
-    public static final double COLLECTOR_DOWN_POWER  = -0.25 ;
+    public static final double COLLECTOR_UP_POWER    =  0.35 ;
+    public static final double COLLECTOR_DOWN_POWER  = -0.10 ;
 
     public static final double COLLECTOR_IN_POWER    =  0.75 ;
     public static final double COLLECTOR_OUT_POWER   =  -0.75 ;
@@ -92,6 +92,7 @@ public class Hardware
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
         collectorDrum.setDirection(DcMotor.Direction.REVERSE);
+        collectorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bucketArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -118,7 +119,7 @@ public class Hardware
         latch.setPower(0.0);
         bucketBox  = hwMap.get(Servo.class, "bucket_box");
         bucketBox.setDirection(Servo.Direction.REVERSE);
-        bucketBox.setPosition(BUCKET_DOOR_OPEN);
+        bucketBox.setPosition(BUCKET_DOOR_CLOSED);
 
     }
  }
