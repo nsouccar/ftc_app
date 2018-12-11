@@ -92,11 +92,11 @@ public class TeleOpSingle extends LinearOpMode {
 
 
             // Use gamepad buttons to open/close scoop door in (X) and out (B)
-            if (gamepad2.right_bumper)
+            if (gamepad1.x)
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_OPEN);
-            else if (gamepad2.left_bumper)
+            else if (gamepad1.b)
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_CLOSED);
-            else if (gamepad2.y)
+            else if (gamepad1.guide)
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_GOLD);
 
             // Use gamepad triggers to spin collector drum in (left_trigger) and out (right_trigger)
