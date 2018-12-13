@@ -66,6 +66,11 @@ public class Hardware
     public static final double BUCKET_DOOR_GOLD   =  0.8 ;
     public static final double BUCKET_DOOR_OPEN   =  1.0 ;
 
+    //auto constants
+    static final double encoder_CPR = 1120;
+    static final double pinion_Diameter_Inches = 20.8/25.4;
+    static final double pinion_CPI = (encoder_CPR/pinion_Diameter_Inches)*Math.PI;
+
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -121,6 +126,13 @@ public class Hardware
         bucketBox.setDirection(Servo.Direction.REVERSE);
         bucketBox.setPosition(BUCKET_DOOR_CLOSED);
 
+    }
+    public void autoInit(HardwareMap otherHwMap) {
+        init(otherHwMap);
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
  }
 
