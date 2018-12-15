@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -29,7 +30,7 @@ public class ToolBox {
     // Driving with PID Controller Members
     Orientation   lastAngles;
     double        globalAngle, correction;
-    PIDController pidRotate, pidDrive;
+    PIDController pidRotate;
 
     //Encoder constants and such
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
@@ -84,9 +85,12 @@ public class ToolBox {
 
         // initialize PID members
         pidRotate  = new PIDController(.005, 0, 0);
+
         lastAngles = new Orientation();
 
-        }
+
+
+    }
 
     // our functions
 
@@ -185,16 +189,42 @@ public class ToolBox {
         return globalAngle;
     }
 
-    public void drive(Double inches) {
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeouts) {
+        int newLeftTarget;
+        int newRightTarget;
 
-        correction = pidDrive.performPID(getAngle());
-        leftDrive.setPower(1 + correction);
-        rightDrive.setPower(1);
+        // Ensure that the opmode is still active
+
+
+        // Determine new target position, and pass to motor controller
+        newLeftTarget = leftDrive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+        newRightTarget = rightDrive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+        leftDrive.setTargetPosition(newLeftTarget);
+        rightDrive.setTargetPosition(newRightTarget);
+
+        // Turn On RUN_TO_POSITION
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+
+        leftDrive.setPower(Math.abs(speed));
+        rightDrive.setPower(Math.abs(speed));
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that BOTH motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+         }
     }
 
 
 
 
 
-}
+
 
