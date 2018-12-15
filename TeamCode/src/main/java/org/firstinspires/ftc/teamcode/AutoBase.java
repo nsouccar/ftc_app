@@ -55,9 +55,11 @@ import com.qualcomm.robotcore.util.Range;
 @Disabled
 public class AutoBase extends LinearOpMode {
 
-    static final double lowerLift = 6.0*Hardware.pinion_CPI;
+    static final double lowerLift = 8.875*Hardware.pinion_CPI;
+    static final double lowerCollector = ((Hardware.encoder_CPR_60/(360/Hardware.choice_angle))/3)*2;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime latchTime = new ElapsedTime();
 
     Hardware robot = new Hardware();
     @Override
@@ -72,7 +74,7 @@ public class AutoBase extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            land();
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -80,11 +82,22 @@ public class AutoBase extends LinearOpMode {
         }
     }
     void land(){
+        robot.collectorArm.setTargetPosition((int)lowerCollector);
+        robot.collectorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.collectorArm.setPower(0.2);
         robot.lift.setTargetPosition((int)lowerLift);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(0.3);
         while (opModeIsActive() && robot.lift.isBusy()) {}
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchTime.reset();
+        while (opModeIsActive() && (latchTime.seconds() < 1.75)) {
+            telemetry.addData("Latch Time:", latchTime.seconds());
+            telemetry.update();
+            //robot.latch.setPower(Hardware.LATCH_OPEN_POWER);
+        }
+
+        robot.latch.setPower(0.0);
     }
 }

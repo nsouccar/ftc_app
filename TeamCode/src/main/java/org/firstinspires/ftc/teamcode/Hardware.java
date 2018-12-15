@@ -67,9 +67,12 @@ public class Hardware
     public static final double BUCKET_DOOR_OPEN   =  1.0 ;
 
     //auto constants
-    static final double encoder_CPR = 1120;
+    static final double encoder_CPR_60 = 1680;
+    //auto lift constants
     static final double pinion_Diameter_Inches = 20.8/25.4;
-    static final double pinion_CPI = (encoder_CPR/pinion_Diameter_Inches)*Math.PI;
+    static final double pinion_CPI = encoder_CPR_60/(pinion_Diameter_Inches*Math.PI);
+    //auto collector constants
+    static final double choice_angle = -80;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -131,8 +134,10 @@ public class Hardware
         init(otherHwMap);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        collectorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        collectorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
  }
 
