@@ -32,10 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -55,9 +54,11 @@ import com.qualcomm.robotcore.util.Range;
 @Disabled
 public class AutoBase extends LinearOpMode {
 
-    static final double lowerLift = 8.875*Hardware.pinion_CPI;
-    static final double lowerCollector = ((Hardware.encoder_CPR_60/(360/Hardware.choice_angle))/3)*2;
-    // Declare OpMode members.
+    //OpMode Members
+    static final double lowerLift = Hardware.LIFT_HEIGHT*Hardware.pinion_CPI;
+    static final double lowerCollector = ((Hardware.ENCODER_CPR_60/(360/Hardware.COLLECTOR_ANGLE))/3)*2;
+
+    // Timers
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime latchTime = new ElapsedTime();
 
@@ -71,15 +72,12 @@ public class AutoBase extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        latchTime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if (opModeIsActive())
             land();
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-        }
     }
     void land(){
         robot.collectorArm.setTargetPosition((int)lowerCollector);
@@ -87,17 +85,62 @@ public class AutoBase extends LinearOpMode {
         robot.collectorArm.setPower(0.2);
         robot.lift.setTargetPosition((int)lowerLift);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.lift.setPower(0.3);
+        robot.lift.setPower(0.5);
         while (opModeIsActive() && robot.lift.isBusy()) {}
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchTime.reset();
-        while (opModeIsActive() && (latchTime.seconds() < 1.75)) {
+        while (opModeIsActive() && (latchTime.seconds() < 0.15) ) {
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.rightDrive.setPower(-0.3);
+            robot.leftDrive.setPower(0.3);
+        }
+        robot.rightDrive.setPower(0.0);
+        robot.leftDrive.setPower(0.0);
+
+        latchTime.reset();
+        while (opModeIsActive() && (latchTime.seconds() < 2.35)) {
             telemetry.addData("Latch Time:", latchTime.seconds());
             telemetry.update();
-            //robot.latch.setPower(Hardware.LATCH_OPEN_POWER);
+            robot.latch.setPower(Hardware.LATCH_OPEN_POWER);
         }
-
         robot.latch.setPower(0.0);
+
+        latchTime.reset();
+        while (opModeIsActive() && latchTime.seconds() < 2) {
+            robot.leftDrive.setPower(0.3);
+            robot.rightDrive.setPower(0.3);
+        }
+        robot.leftDrive.setPower(0.0);
+        robot.rightDrive.setPower(0.0);
+
+/*        robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightDrive.setTargetPosition(55*(int)Hardware.WHEEL_CPI);
+        robot.leftDrive.setTargetPosition(55*(int)Hardware.WHEEL_CPI);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightDrive.setPower(0.3);
+        robot.leftDrive.setPower(0.3);
+        while (opModeIsActive() && robot.leftDrive.isBusy() && robot.rightDrive.isBusy()) {
+            telemetry.addData("Encoder Right:", robot.rightDrive.getCurrentPosition());
+            telemetry.addData("Encoder Left:", robot.leftDrive.getCurrentPosition());
+            telemetry.update();
+
+        }
+        robot.leftDrive.setPower(0.0);
+        robot.rightDrive.setPower(0.0);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+
+        robot.lift.setTargetPosition((int)Hardware.pinion_CPI);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.lift.setPower(0.5);
+        while (opModeIsActive() && robot.lift.isBusy()) {}
+        robot.lift.setPower(0.0);
+        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

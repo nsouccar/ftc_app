@@ -62,17 +62,26 @@ public class Hardware
     public static final double BUCKET_UP_POWER    =  0.5 ;
     public static final double BUCKET_DOWN_POWER  =  -0.5 ;
 
-    public static final double BUCKET_DOOR_CLOSED =  0.5 ;
-    public static final double BUCKET_DOOR_GOLD   =  0.8 ;
+    public static final double BUCKET_DOOR_CLOSED =  0.7 ;
+    public static final double BUCKET_DOOR_GOLD   =  0.9 ;
     public static final double BUCKET_DOOR_OPEN   =  1.0 ;
 
     //auto constants
-    static final double encoder_CPR_60 = 1680;
+    static final double ENCODER_CPR_60 = 1680;
+    static final double ENCODER_CPR_40 = 1120;
+
     //auto lift constants
-    static final double pinion_Diameter_Inches = 20.8/25.4;
-    static final double pinion_CPI = encoder_CPR_60/(pinion_Diameter_Inches*Math.PI);
+    static final double PINION_DIAMETER_Inches = 20.8/25.4;
+    //static final double LIFT_HEIGHT = 8.875;
+    static final double LIFT_HEIGHT = 9.5;
+    static final double pinion_CPI = ENCODER_CPR_60/(PINION_DIAMETER_Inches*Math.PI);
+
     //auto collector constants
-    static final double choice_angle = -80;
+    static final double COLLECTOR_ANGLE = -90;
+
+    //auto drive constants
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double WHEEL_CPI = ENCODER_CPR_40/(WHEEL_DIAMETER_INCHES*Math.PI);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -138,6 +147,11 @@ public class Hardware
 
         collectorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         collectorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
  }
 
