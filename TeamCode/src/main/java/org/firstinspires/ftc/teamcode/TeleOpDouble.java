@@ -48,11 +48,11 @@ public class TeleOpDouble extends LinearOpMode {
             else
                 robot.latch.setPower(0.0);
 
-            // Use gamepad dpad to move lift up (dpad_up) and down (dpad_down)
-            if (gamepad2.dpad_up)
-                robot.lift.setPower(robot.LIFT_UP_POWER);
-            else if (gamepad2.dpad_down)
-                robot.lift.setPower(robot.LIFT_DOWN_POWER);
+            // Use gamepad trigger to move lift up and down
+            if (gamepad1.right_trigger > 0.05)
+                robot.lift.setPower(gamepad1.right_trigger);
+            else if (gamepad1.left_trigger > 0.05)
+                robot.lift.setPower(-gamepad1.left_trigger);
             else
                 robot.lift.setPower(0.0);
 
@@ -66,15 +66,22 @@ public class TeleOpDouble extends LinearOpMode {
 
             // Use gamepad triggers to spin collector drum in (right_trigger) and out (left_trigger)
             if (gamepad2.right_trigger > 0.05)
-                robot.collectorDrum.setPower(gamepad2.right_trigger);
+                robot.collectorDrum.setPower(-gamepad2.right_trigger);
             else if (gamepad2.left_trigger > 0.05)
-                robot.collectorDrum.setPower(-gamepad2.left_trigger);
+                robot.collectorDrum.setPower(gamepad2.left_trigger);
             else
                 robot.collectorDrum.setPower(0.0);
 
             // Use gamepad right stick to move bucket up and down
-            double up = -gamepad2.right_stick_y;
-            robot.bucketArm.setPower(0.5*up);
+            if (gamepad2.dpad_up) {
+                robot.bucketArm.setPower(Hardware.BUCKET_UP_POWER);
+            }
+            else if (gamepad2.dpad_down) {
+                robot.bucketArm.setPower(Hardware.BUCKET_DOWN_POWER);
+            }
+            else {
+                robot.bucketArm.setPower(0.0);
+            }
 
             // Use gamepad bumpers to open(right) and close(left) bucket door and gold(y)
             if (gamepad2.right_bumper)

@@ -47,7 +47,7 @@ public class Hardware
     public CRServo  latch       = null;
     public Servo    bucketBox   = null;
 
-    public static final double COLLECTOR_UP_POWER    =  0.35 ;
+    public static final double COLLECTOR_UP_POWER    =  0.5 ;
     public static final double COLLECTOR_DOWN_POWER  = -0.10 ;
 
     public static final double COLLECTOR_IN_POWER    =  0.75 ;
@@ -60,7 +60,7 @@ public class Hardware
     public static final double LATCH_CLOSE_POWER = -0.6 ;
 
     public static final double BUCKET_UP_POWER    =  0.5 ;
-    public static final double BUCKET_DOWN_POWER  =  -0.5 ;
+    public static final double BUCKET_DOWN_POWER  =  -0.4 ;
 
     public static final double BUCKET_DOOR_CLOSED =  0.7 ;
     public static final double BUCKET_DOOR_GOLD   =  0.9 ;
