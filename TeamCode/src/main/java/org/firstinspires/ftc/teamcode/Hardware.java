@@ -62,8 +62,8 @@ public class Hardware
     public static final double BUCKET_UP_POWER    =  0.5 ;
     public static final double BUCKET_DOWN_POWER  =  -0.4 ;
 
-    public static final double BUCKET_DOOR_CLOSED =  0.7 ;
-    public static final double BUCKET_DOOR_GOLD   =  0.9 ;
+    public static final double BUCKET_DOOR_CLOSED =  0.55 ;
+    public static final double BUCKET_DOOR_GOLD   =  0.88 ;
     public static final double BUCKET_DOOR_OPEN   =  1.0 ;
 
     //auto constants
