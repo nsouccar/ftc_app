@@ -48,7 +48,7 @@ public class Hardware
     public Servo    bucketBox   = null;
 
     public static final double COLLECTOR_UP_POWER    =  0.5 ;
-    public static final double COLLECTOR_DOWN_POWER  = -0.10 ;
+    public static final double COLLECTOR_DOWN_POWER  = -0.17 ;
 
     public static final double COLLECTOR_IN_POWER    =  0.75 ;
     public static final double COLLECTOR_OUT_POWER   =  -0.75 ;
