@@ -73,7 +73,7 @@ public class Hardware
     //auto lift constants
     static final double PINION_DIAMETER_Inches = 20.8/25.4;
     //static final double LIFT_HEIGHT = 8.875;
-    static final double LIFT_HEIGHT = 9.5;
+    static final double LIFT_HEIGHT = 9.4;
     static final double pinion_CPI = ENCODER_CPR_60/(PINION_DIAMETER_Inches*Math.PI);
 
     //auto collector constants

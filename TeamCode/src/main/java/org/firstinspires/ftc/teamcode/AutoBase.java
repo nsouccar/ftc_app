@@ -43,10 +43,12 @@ public class AutoBase extends LinearOpMode {
     //OpMode Members
     static final double lowerLift = Hardware.LIFT_HEIGHT*Hardware.pinion_CPI;
     static final double lowerCollector = ((Hardware.ENCODER_CPR_60/(360/Hardware.COLLECTOR_ANGLE))/3)*2;
+    Boolean crater = true;
 
     // Timers
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime latchTime = new ElapsedTime();
+    private ElapsedTime motorTime = new ElapsedTime();
 
     Hardware robot = new Hardware();
     @Override
@@ -59,10 +61,39 @@ public class AutoBase extends LinearOpMode {
         waitForStart();
         runtime.reset();
         latchTime.reset();
+        motorTime.reset();
+
+
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive())
             land();
+
+        motorTime.reset();
+        if(crater == true) {
+            while (opModeIsActive() &&(motorTime.seconds() < 4.)) {
+                robot.leftDrive.setPower(.4);
+                robot.rightDrive.setPower(.4);
+            }
+            robot.leftDrive.setPower(0.);
+            robot.rightDrive.setPower(0.);
+         //this is depo
+        } else if(crater == false) {
+            while (opModeIsActive() && (motorTime.seconds() < 4.)) {
+                robot.leftDrive.setPower(.4);
+                robot.rightDrive.setPower(.4);
+            }
+            robot.leftDrive.setPower(0.);
+            robot.rightDrive.setPower(0.);
+
+            robot.collectorDrum.setPower(.4);
+            sleep(500);
+            robot.collectorDrum.setPower(0.);
+
+
+
+
+        }
 
     }
     void land(){
@@ -76,11 +107,11 @@ public class AutoBase extends LinearOpMode {
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchTime.reset();
-        while (opModeIsActive() && (latchTime.seconds() < 0.15) ) {
+        while (opModeIsActive() && latchTime.seconds() < 0.2)  {
             robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightDrive.setPower(-0.3);
-            robot.leftDrive.setPower(0.3);
+            robot.rightDrive.setPower(-0.32);
+            robot.leftDrive.setPower(0.32);
         }
         robot.rightDrive.setPower(0.0);
         robot.leftDrive.setPower(0.0);
@@ -94,7 +125,7 @@ public class AutoBase extends LinearOpMode {
         robot.latch.setPower(0.0);
 
         latchTime.reset();
-        while (opModeIsActive() && latchTime.seconds() < 2) {
+        while (opModeIsActive() && (latchTime.seconds() < 2)) {
             robot.leftDrive.setPower(0.3);
             robot.rightDrive.setPower(0.3);
         }

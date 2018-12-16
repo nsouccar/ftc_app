@@ -4,5 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Auto Crater", group = "Autonomous")
 public class AutoCrater extends AutoBase {
-    public AutoCrater(){};
+    public AutoCrater(){
+        crater = true;
+    };
 }
