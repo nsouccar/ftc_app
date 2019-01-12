@@ -71,7 +71,7 @@ public class AutoBase extends LinearOpMode {
 
         motorTime.reset();
         if(crater == true) {
-            while (opModeIsActive() &&(motorTime.seconds() < 4.)) {
+            while (opModeIsActive() &&(motorTime.seconds() < 6.)) {
                 robot.leftDrive.setPower(.4);
                 robot.rightDrive.setPower(.4);
             }
@@ -79,7 +79,7 @@ public class AutoBase extends LinearOpMode {
             robot.rightDrive.setPower(0.);
          //this is depo
         } else if(crater == false) {
-            while (opModeIsActive() && (motorTime.seconds() < 4.)) {
+            while (opModeIsActive() && (motorTime.seconds() < 6.)) {
                 robot.leftDrive.setPower(.4);
                 robot.rightDrive.setPower(.4);
             }
@@ -107,11 +107,11 @@ public class AutoBase extends LinearOpMode {
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchTime.reset();
-        while (opModeIsActive() && latchTime.seconds() < 0.2)  {
+        while (opModeIsActive() && latchTime.seconds() < 0.25) {
             robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightDrive.setPower(-0.32);
-            robot.leftDrive.setPower(0.32);
+            robot.rightDrive.setPower(-0.35);
+            robot.leftDrive.setPower(0.35);
         }
         robot.rightDrive.setPower(0.0);
         robot.leftDrive.setPower(0.0);
