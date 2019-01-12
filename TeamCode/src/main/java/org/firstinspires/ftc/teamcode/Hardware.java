@@ -47,19 +47,19 @@ public class Hardware
     public CRServo  latch       = null;
     public Servo    bucketBox   = null;
 
-    public static final double COLLECTOR_UP_POWER    =  0.5 ;
-    public static final double COLLECTOR_DOWN_POWER  = -0.17 ;
+    public static final double COLLECTOR_UP_POWER    =  0.7 ;
+    public static final double COLLECTOR_DOWN_POWER  = -0.35 ;
 
     public static final double COLLECTOR_IN_POWER    =  0.75 ;
     public static final double COLLECTOR_OUT_POWER   =  -0.75 ;
 
-    public static final double LIFT_UP_POWER    =  0.75 ;
-    public static final double LIFT_DOWN_POWER  = -0.75 ;
+    public static final double LIFT_UP_POWER    =  0.9 ;
+    public static final double LIFT_DOWN_POWER  = -0.9 ;
 
     public static final double LATCH_OPEN_POWER  =  0.6 ;
     public static final double LATCH_CLOSE_POWER = -0.6 ;
 
-    public static final double BUCKET_UP_POWER    =  0.5 ;
+    public static final double BUCKET_UP_POWER    =  0.8 ;
     public static final double BUCKET_DOWN_POWER  =  -0.4 ;
 
     public static final double BUCKET_DOOR_CLOSED =  0.55 ;
@@ -109,9 +109,14 @@ public class Hardware
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
         collectorDrum.setDirection(DcMotor.Direction.REVERSE);
+
+        collectorArm.setDirection(DcMotor.Direction.REVERSE);
         collectorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        bucketArm.setDirection(DcMotor.Direction.REVERSE);
         bucketArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
