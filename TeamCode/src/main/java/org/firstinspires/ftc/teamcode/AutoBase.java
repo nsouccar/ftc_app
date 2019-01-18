@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.lang.Math.*;
 
 @Autonomous(name="Auto Base", group="Autonomous")
 @Disabled
@@ -66,11 +67,25 @@ public class AutoBase extends LinearOpMode {
 
 
         // run until the end of the match (driver presses STOP)
-        if (opModeIsActive())
-            land();
+        if (opModeIsActive()) {
+            //land();
 
-        motorTime.reset();
-        if(crater == true) {
+            robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            runtime.reset();
+            //moveThatRobot(.5, 7, 7, 4);
+            rotate(90, .5, 10000);
+            robot.leftDrive.setPower(0);
+            robot.rightDrive.setPower(0);
+
+        }
+
+
+        /*motorTime.reset();
+        if(crater true) {
             while (opModeIsActive() &&(motorTime.seconds() < 6.)) {
                 robot.leftDrive.setPower(.4);
                 robot.rightDrive.setPower(.4);
@@ -90,12 +105,12 @@ public class AutoBase extends LinearOpMode {
             sleep(500);
             robot.collectorDrum.setPower(0.);
 
-
+*/
 
 
         }
 
-    }
+
     void land(){
         robot.collectorArm.setTargetPosition((int)lowerCollector);
         robot.collectorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -160,4 +175,100 @@ public class AutoBase extends LinearOpMode {
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-}
+    public void moveThatRobot(double speed,
+                              double leftInches, double rightInches,
+                              double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+        newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (leftInches * robot.COUNTS_PER_INCH);
+        newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (rightInches * robot.COUNTS_PER_INCH);
+        robot.leftDrive.setTargetPosition(newLeftTarget);
+        robot.rightDrive.setTargetPosition(newRightTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.addData("update:", "about to turn on motors");
+        telemetry.update();
+        robot.leftDrive.setPower(Math.abs(speed));
+        robot.rightDrive.setPower(Math.abs(speed));
+
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+            telemetry.addData("Path2",  "Running at %7d :%7d",
+                    robot.leftDrive.getCurrentPosition(),
+                    robot.rightDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        robot.leftDrive.setPower(0);
+        robot.rightDrive.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //  sleep(250);   // optional pause after each move
+        }
+
+        public void rotate(double degrees, double speed, double timeoutS) {
+            //arc length/2pir = degrees
+            //degrees/2pir = arc length
+            double circumference = 2 * Math.PI * 6.625;
+            double inches = degrees/circumference;
+
+            int newLeftTarget;
+            int newRightTarget;
+            newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
+            newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
+            if(degrees > 0 ) {
+
+                robot.leftDrive.setTargetPosition(-newLeftTarget);
+                robot.rightDrive.setTargetPosition(newRightTarget);
+            } else if (degrees < 0) {
+                robot.leftDrive.setTargetPosition(newLeftTarget);
+                robot.rightDrive.setTargetPosition(-newRightTarget);
+            }
+            // Turn On RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            telemetry.addData("update:", "about to turn on motors");
+            telemetry.update();
+            robot.leftDrive.setPower(Math.abs(speed));
+            robot.rightDrive.setPower(Math.abs(speed));
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path2",  "Running at %7d :%7d",
+                        robot.leftDrive.getCurrentPosition(),
+                        robot.rightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.leftDrive.setPower(0);
+            robot.rightDrive.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        }
+
+    }
+
+
+
