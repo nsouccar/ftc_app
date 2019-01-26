@@ -83,14 +83,14 @@ public class TeleOpSingle extends LinearOpMode {
                 robot.latch.setPower(0.);
 
             // Use gamepad buttons to move collector arm up (Y) and down (A)
-            if (gamepad1.y)
+            /*if (gamepad1.y)
                 robot.collectorArm.setPower(robot.COLLECTOR_UP_POWER);
             else if (gamepad1.a)
                 robot.collectorArm.setPower(robot.COLLECTOR_DOWN_POWER);
             else
                 robot.collectorArm.setPower(0.0);
 
-
+*/
             // Use gamepad buttons to open/close scoop door in (X) and out (B)
             if (gamepad1.x)
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_OPEN);
@@ -100,13 +100,13 @@ public class TeleOpSingle extends LinearOpMode {
                 robot.bucketBox.setPosition(robot.BUCKET_DOOR_GOLD);
 
             // Use gamepad triggers to spin collector drum in (left_trigger) and out (right_trigger)
-            if (gamepad1.left_trigger > 0.05)
+            /*if (gamepad1.left_trigger > 0.05)
                 robot.collectorDrum.setPower(-gamepad1.left_trigger);
             else if (gamepad1.right_trigger > 0.05)
                 robot.collectorDrum.setPower(gamepad1.right_trigger);
             else
                 robot.collectorDrum.setPower(0.0);
-
+*/
             // Use gamepad buttons to move lift up (dpad_up) and down (dpad_down)
             if (gamepad1.dpad_up)
                 robot.lift.setPower(robot.LIFT_UP_POWER);

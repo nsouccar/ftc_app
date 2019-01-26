@@ -36,14 +36,19 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.lang.Math.*;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import java.util.List;
 
 @Autonomous(name="Auto Base", group="Autonomous")
 @Disabled
 public class AutoBase extends LinearOpMode {
 
     //OpMode Members
-    static final double lowerLift = Hardware.LIFT_HEIGHT*Hardware.pinion_CPI;
-    static final double lowerCollector = ((Hardware.ENCODER_CPR_60/(360/Hardware.COLLECTOR_ANGLE))/3)*2;
+    static final double lowerLift = Hardware.LIFT_HEIGHT * Hardware.pinion_CPI;
+    static final double lowerCollector = ((Hardware.ENCODER_CPR_60 / (360 / Hardware.COLLECTOR_ANGLE)) / 3) * 2;
     Boolean crater = true;
 
     // Timers
@@ -52,18 +57,26 @@ public class AutoBase extends LinearOpMode {
     private ElapsedTime motorTime = new ElapsedTime();
 
     Hardware robot = new Hardware();
+
     @Override
     public void runOpMode() {
         robot.autoInit(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        robot.initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            robot.initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
         latchTime.reset();
         motorTime.reset();
-
 
 
         // run until the end of the match (driver presses STOP)
@@ -77,7 +90,20 @@ public class AutoBase extends LinearOpMode {
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             runtime.reset();
             //moveThatRobot(.5, 7, 7, 4);
-            rotate(90, .5, 10000);
+            //moveThatRobot(.5, 7, 7, 8);
+
+            Sample();
+            //moveThatRobot(.5, -5, -5, 4);
+            //telemetry.addData("move", 1);
+            //telemetry.update();
+
+            rotate(90, .25, 5);
+            telemetry.addData("rotate", 1);
+            moveThatRobot(.5, -5, -5, 4);
+            telemetry.addData("moveelse", 2);
+
+
+
             robot.leftDrive.setPower(0);
             robot.rightDrive.setPower(0);
 
@@ -108,17 +134,18 @@ public class AutoBase extends LinearOpMode {
 */
 
 
-        }
+    }
 
 
-    void land(){
-        robot.collectorArm.setTargetPosition((int)lowerCollector);
-        robot.collectorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.collectorArm.setPower(0.2);
-        robot.lift.setTargetPosition((int)lowerLift);
+    void land() {
+        //robot.collectorArm.setTargetPosition((int) lowerCollector);
+        //robot.collectorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //robot.collectorArm.setPower(0.2);
+        robot.lift.setTargetPosition((int) lowerLift);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(0.5);
-        while (opModeIsActive() && robot.lift.isBusy()) {}
+        while (opModeIsActive() && robot.lift.isBusy()) {
+        }
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchTime.reset();
@@ -168,16 +195,19 @@ public class AutoBase extends LinearOpMode {
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
-        robot.lift.setTargetPosition((int)Hardware.pinion_CPI);
+        robot.lift.setTargetPosition((int) Hardware.pinion_CPI);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(0.5);
-        while (opModeIsActive() && robot.lift.isBusy()) {}
+        while (opModeIsActive() && robot.lift.isBusy()) {
+        }
         robot.lift.setPower(0.0);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public void moveThatRobot(double speed,
                               double leftInches, double rightInches,
                               double timeoutS) {
+        runtime.reset();
         int newLeftTarget;
         int newRightTarget;
         newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (leftInches * robot.COUNTS_PER_INCH);
@@ -199,8 +229,8 @@ public class AutoBase extends LinearOpMode {
                 (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-            telemetry.addData("Path2",  "Running at %7d :%7d",
+          telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+           telemetry.addData("Path2", "Running at %7d :%7d",
                     robot.leftDrive.getCurrentPosition(),
                     robot.rightDrive.getCurrentPosition());
             telemetry.update();
@@ -215,60 +245,138 @@ public class AutoBase extends LinearOpMode {
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  sleep(250);   // optional pause after each move
+    }
+
+    public void rotate(double degrees, double speed, double timeoutS) {
+        //arc length/2pir = degrees
+        //degrees/2pir = arc length
+        double circumference = 2 * Math.PI * 6.625;
+        double inches = degrees / circumference;
+
+        int newLeftTarget;
+        int newRightTarget;
+        newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
+        newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
+        if (degrees > 0) {
+
+            robot.leftDrive.setTargetPosition(-newLeftTarget);
+            robot.rightDrive.setTargetPosition(newRightTarget);
+        } else if (degrees < 0) {
+            robot.leftDrive.setTargetPosition(newLeftTarget);
+            robot.rightDrive.setTargetPosition(-newRightTarget);
+        }
+        // Turn On RUN_TO_POSITION
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.addData("update:", "about to turn on motors");
+        telemetry.update();
+        robot.leftDrive.setPower(Math.abs(speed));
+        robot.rightDrive.setPower(Math.abs(speed));
+
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+            telemetry.addData("Path2", "Running at %7d :%7d",
+                    robot.leftDrive.getCurrentPosition(),
+                    robot.rightDrive.getCurrentPosition());
+            telemetry.update();
         }
 
-        public void rotate(double degrees, double speed, double timeoutS) {
-            //arc length/2pir = degrees
-            //degrees/2pir = arc length
-            double circumference = 2 * Math.PI * 6.625;
-            double inches = degrees/circumference;
+        // Stop all motion;
+        robot.leftDrive.setPower(0);
+        robot.rightDrive.setPower(0);
 
-            int newLeftTarget;
-            int newRightTarget;
-            newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
-            newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
-            if(degrees > 0 ) {
+        // Turn off RUN_TO_POSITION
+        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                robot.leftDrive.setTargetPosition(-newLeftTarget);
-                robot.rightDrive.setTargetPosition(newRightTarget);
-            } else if (degrees < 0) {
-                robot.leftDrive.setTargetPosition(newLeftTarget);
-                robot.rightDrive.setTargetPosition(-newRightTarget);
-            }
-            // Turn On RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            telemetry.addData("update:", "about to turn on motors");
-            telemetry.update();
-            robot.leftDrive.setPower(Math.abs(speed));
-            robot.rightDrive.setPower(Math.abs(speed));
+    }
 
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.leftDrive.getCurrentPosition(),
-                        robot.rightDrive.getCurrentPosition());
-                telemetry.update();
+    public void Sample() {
+        if (opModeIsActive()) {
+            /** Activate Tensor Flow Object Detection. */
+            if (robot.tfod != null) {
+                robot.tfod.activate();
             }
 
-            // Stop all motion;
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
+            while (opModeIsActive()) {
+                if (robot.tfod != null) {
+                    telemetry.addData("fuck ya", "ha");
+                    telemetry.update();
 
-            // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
+                    /*while(updatedRecognitions == null && updatedRecognitions.size() != 1){
+                        hardware.rotate(45, .25);
+                        hardware.rotate(-45, .25);
+                    } while(updatedRecognitions.size() != 1) {
+                        hardware.rotate(45, .25);
+                        hardware.rotate(-45, .25);
+                    }
+                    while
+                    */
+                    if (updatedRecognitions != null && updatedRecognitions.size() == 1) {
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        for (Recognition recognition : updatedRecognitions) {
+                            if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
+                                moveThatRobot(1, -12, -12, 4);
+                            } else {
+                                rotate(145, .5, 4);
+                               // moveThatRobot(1, -6, -6, 9);
+                                telemetry.addData("oh no!", "hi");
+                                List<Recognition> updatedRecognitions2 = robot.tfod.getUpdatedRecognitions();
+
+                                if (updatedRecognitions2 != null && updatedRecognitions2.size() == 1) {
+                                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+                                    for (Recognition recognition2 : updatedRecognitions2) {
+                                        if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
+                                            telemetry.addData("fuck ya", recognition.getLabel());
+                                            telemetry.update();
+                                            moveThatRobot(.5, -12, -12, 17);
+                                            ///moveThatRobot(1, 1, 1, 4);
+
+                                            //rotate(90, .5, 4);
+                                            //moveThatRobot(1, -15, -15, 4);
+
+                                        } else {
+                                            rotate(-180, .5, 4);
+                                            moveThatRobot(1, -6, -6, 4);
+                                            rotate(90, .5, 4);
+                                            moveThatRobot(1, -15, -15, 4);
+
+                                            robot.rightDrive.setPower(0.0);
+                                            robot.leftDrive.setPower(0.0);
 
 
+                                        }
+
+                                        telemetry.addData("fuck eys bitches", "h");
+                                    }
+
+                                    //findGold(tfod.getUpdatedRecognitions(), 45, hardware);
+
+
+                                    telemetry.update();
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
 
         }
 
     }
+
+}
 
 
 

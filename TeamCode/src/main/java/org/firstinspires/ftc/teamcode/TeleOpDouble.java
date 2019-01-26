@@ -57,39 +57,50 @@ public class TeleOpDouble extends LinearOpMode {
                 robot.lift.setPower(0.0);
 
             // Use gamepad buttons to move collector arm up (b) and down (x)
-            if (gamepad2.b)
+            /*if (gamepad2.b)
                 robot.collectorArm.setPower(robot.COLLECTOR_UP_POWER);
             else if (gamepad2.x)
                 robot.collectorArm.setPower(robot.COLLECTOR_DOWN_POWER);
             else
                 robot.collectorArm.setPower(0.0);
-
+*/
             // Use gamepad triggers to spin collector drum in (right_trigger) and out (left_trigger)
-            if (gamepad2.right_trigger > 0.05)
+            /*if (gamepad2.right_trigger > 0.05)
                 robot.collectorDrum.setPower(-gamepad2.right_trigger);
             else if (gamepad2.left_trigger > 0.05)
                 robot.collectorDrum.setPower(gamepad2.left_trigger);
             else
                 robot.collectorDrum.setPower(0.0);
-
+*/
             // Use gamepad right stick to move bucket up and down
             if (gamepad2.dpad_up) {
                 robot.bucketArm.setPower(Hardware.BUCKET_UP_POWER);
+                robot.bucketArm2.setPower(Hardware.BUCKET_UP_POWER);
             }
             else if (gamepad2.dpad_down) {
                 robot.bucketArm.setPower(Hardware.BUCKET_DOWN_POWER);
+                robot.bucketArm2.setPower(Hardware.BUCKET_DOWN_POWER);
             }
             else {
                 robot.bucketArm.setPower(0.0);
+                robot.bucketArm2.setPower(0.0);
             }
 
             // Use gamepad bumpers to open(right) and close(left) bucket door and gold(y)
+
+                if (gamepad2.right_trigger > 0.05)
+                    robot.collector.setPower(gamepad1.right_trigger);
+                else if (gamepad2.left_trigger > 0.05)
+                    robot.collector.setPower(-gamepad1.left_trigger);
+                else
+                    robot.collector.setPower(0.0);
+            //else if (gamepad2.y)
+              //  robot.bucketBox.setPosition(robot.BUCKET_DOOR_GOLD);
+
             if (gamepad2.right_bumper)
-                robot.bucketBox.setPosition(robot.BUCKET_DOOR_OPEN);
+                robot.winch.setPower(robot.WINCH_UP_POWER);
             else if (gamepad2.left_bumper)
-                robot.bucketBox.setPosition(robot.BUCKET_DOOR_CLOSED);
-            else if (gamepad2.y)
-                robot.bucketBox.setPosition(robot.BUCKET_DOOR_GOLD);
+                robot.winch.setPower(robot.WINCH_DOWN_POWER);
 
 
 
