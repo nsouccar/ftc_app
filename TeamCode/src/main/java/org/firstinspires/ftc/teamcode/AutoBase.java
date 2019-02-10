@@ -56,7 +56,12 @@ public class AutoBase extends LinearOpMode {
     private ElapsedTime latchTime = new ElapsedTime();
     private ElapsedTime motorTime = new ElapsedTime();
 
+
     Hardware robot = new Hardware();
+    float hsvValues[] = {0F, 0F, 0F};
+    final float values[] = hsvValues;
+    int color = 0;
+
 
     @Override
     public void runOpMode() {
@@ -92,20 +97,26 @@ public class AutoBase extends LinearOpMode {
             //moveThatRobot(.5, 7, 7, 4);
             //moveThatRobot(.5, 7, 7, 8);
 
-            Sample();
+            //Sample();
             //moveThatRobot(.5, -5, -5, 4);
             //telemetry.addData("move", 1);
             //telemetry.update();
 
-            rotate(90, .25, 5);
-            telemetry.addData("rotate", 1);
-            moveThatRobot(.5, -5, -5, 4);
-            telemetry.addData("moveelse", 2);
+            //rotate(90, .25, 18);
+            //telemetry.addData("rotate", 1);
+            //moveThatRobot(.5, -5, -5, 4);
+            //telemetry.addData("moveelse", 2);
 
 
+            //robot.leftDrive.setPower(0);
+            //robot.rightDrive.setPower(0);
 
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
+            //rotate(112, .5, 3);
+            land();
+            runtime.reset();
+            rotate(630 , 1, 3);
+            Sample();
+            //findLine();
 
         }
 
@@ -152,9 +163,10 @@ public class AutoBase extends LinearOpMode {
         while (opModeIsActive() && latchTime.seconds() < 0.25) {
             robot.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightDrive.setPower(-0.35);
-            robot.leftDrive.setPower(0.35);
+            robot.rightDrive.setPower(-0.5);
+            robot.leftDrive.setPower(0.5);
         }
+
         robot.rightDrive.setPower(0.0);
         robot.leftDrive.setPower(0.0);
 
@@ -168,8 +180,8 @@ public class AutoBase extends LinearOpMode {
 
         latchTime.reset();
         while (opModeIsActive() && (latchTime.seconds() < 2)) {
-            robot.leftDrive.setPower(0.3);
-            robot.rightDrive.setPower(0.3);
+            robot.leftDrive.setPower(0.5);
+            robot.rightDrive.setPower(0.5);
         }
         robot.leftDrive.setPower(0.0);
         robot.rightDrive.setPower(0.0);
@@ -229,12 +241,13 @@ public class AutoBase extends LinearOpMode {
                 (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
 
             // Display it for the driver.
-          telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
-           telemetry.addData("Path2", "Running at %7d :%7d",
+            telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+            telemetry.addData("Path2", "Running at %7d :%7d",
                     robot.leftDrive.getCurrentPosition(),
                     robot.rightDrive.getCurrentPosition());
             telemetry.update();
         }
+
 
         // Stop all motion;
         robot.leftDrive.setPower(0);
@@ -253,18 +266,16 @@ public class AutoBase extends LinearOpMode {
         double circumference = 2 * Math.PI * 6.625;
         double inches = degrees / circumference;
 
+        runtime.reset();
         int newLeftTarget;
         int newRightTarget;
         newLeftTarget = robot.leftDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
         newRightTarget = robot.rightDrive.getCurrentPosition() + (int) (inches * robot.COUNTS_PER_INCH);
-        if (degrees > 0) {
+
 
             robot.leftDrive.setTargetPosition(-newLeftTarget);
             robot.rightDrive.setTargetPosition(newRightTarget);
-        } else if (degrees < 0) {
-            robot.leftDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(-newRightTarget);
-        }
+
         // Turn On RUN_TO_POSITION
         robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -276,7 +287,7 @@ public class AutoBase extends LinearOpMode {
 
         while (opModeIsActive() &&
                 (runtime.seconds() < timeoutS) &&
-                (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+                (robot.leftDrive.isBusy()) && robot.rightDrive.isBusy()) {
 
             // Display it for the driver.
             telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
@@ -284,99 +295,141 @@ public class AutoBase extends LinearOpMode {
                     robot.leftDrive.getCurrentPosition(),
                     robot.rightDrive.getCurrentPosition());
             telemetry.update();
+
+        }
+            // Stop all motion;
+            robot.leftDrive.setPower(0);
+            robot.rightDrive.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         }
 
-        // Stop all motion;
-        robot.leftDrive.setPower(0);
-        robot.rightDrive.setPower(0);
 
-        // Turn off RUN_TO_POSITION
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        public Integer Sample () {
+        int position = 1;
 
-
-    }
-
-    public void Sample() {
-        if (opModeIsActive()) {
-            /** Activate Tensor Flow Object Detection. */
-            if (robot.tfod != null) {
-                robot.tfod.activate();
-            }
-
-            while (opModeIsActive()) {
+            if (opModeIsActive()) {
+                /** Activate Tensor Flow Object Detection. */
                 if (robot.tfod != null) {
-                    telemetry.addData("fuck ya", "ha");
-                    telemetry.update();
+                    robot.tfod.activate();
+                }
 
-                    List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
-                    /*while(updatedRecognitions == null && updatedRecognitions.size() != 1){
-                        hardware.rotate(45, .25);
-                        hardware.rotate(-45, .25);
-                    } while(updatedRecognitions.size() != 1) {
-                        hardware.rotate(45, .25);
-                        hardware.rotate(-45, .25);
-                    }
-                    while
-                    */
-                    if (updatedRecognitions != null && updatedRecognitions.size() == 1) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        for (Recognition recognition : updatedRecognitions) {
-                            if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
-                                moveThatRobot(1, -12, -12, 4);
-                            } else {
-                                rotate(145, .5, 4);
-                               // moveThatRobot(1, -6, -6, 9);
-                                telemetry.addData("oh no!", "hi");
-                                List<Recognition> updatedRecognitions2 = robot.tfod.getUpdatedRecognitions();
+                while (opModeIsActive()) {
+                    if (robot.tfod != null) {
+                        telemetry.addData("fuck ya", "ha");
+                        telemetry.update();
 
-                                if (updatedRecognitions2 != null && updatedRecognitions2.size() == 1) {
-                                    telemetry.addData("# Object Detected", updatedRecognitions.size());
-                                    for (Recognition recognition2 : updatedRecognitions2) {
-                                        if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
-                                            telemetry.addData("fuck ya", recognition.getLabel());
-                                            telemetry.update();
-                                            moveThatRobot(.5, -12, -12, 17);
-                                            ///moveThatRobot(1, 1, 1, 4);
+                        List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
 
-                                            //rotate(90, .5, 4);
-                                            //moveThatRobot(1, -15, -15, 4);
+                        if (updatedRecognitions != null && updatedRecognitions.size() == 1) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
+                            for (Recognition recognition : updatedRecognitions) {
+                                if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
+                                    moveThatRobot(1, -17, -17, 4);
+                                    position = 1;
 
-                                        } else {
-                                            rotate(-180, .5, 4);
-                                            moveThatRobot(1, -6, -6, 4);
-                                            rotate(90, .5, 4);
-                                            moveThatRobot(1, -15, -15, 4);
+                                } else {
+                                    rotate(135, .5, 4);
+                                    List<Recognition> updatedRecognitions2 = robot.tfod.getUpdatedRecognitions();
+                                    if (updatedRecognitions2 != null && updatedRecognitions2.size() == 1) {
+                                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                                        for (Recognition recognition2 : updatedRecognitions2) {
 
-                                            robot.rightDrive.setPower(0.0);
-                                            robot.leftDrive.setPower(0.0);
+                                            if (recognition.getLabel().equals(robot.LABEL_GOLD_MINERAL) == true) {
+                                                telemetry.addData("status", "turning");
+                                                telemetry.update();
+
+                                                moveThatRobot(.5, -17, -17, 6);
+                                                position = 2;
 
 
+                                            } else {
+                                                telemetry.addData("hi", "hi");
+                                                telemetry.update();
+                                                rotate(-111, .5, 25);
+                                                moveThatRobot(.5, -25, -25, 6);
+                                                position = 3;
+
+
+                                            }
                                         }
 
-                                        telemetry.addData("fuck eys bitches", "h");
+
                                     }
 
-                                    //findGold(tfod.getUpdatedRecognitions(), 45, hardware);
-
-
-                                    telemetry.update();
                                 }
-                            }
 
+
+                                //findGold(tfod.getUpdatedRecognitions(), 45, hardware);
+
+                            }
+                            telemetry.update();
                         }
+
 
                     }
 
                 }
 
+
+
             }
+
+                return position;
+
 
         }
 
+
+
+
+    public String getColor () {
+        String colorString = "None";
+        //setting number values for each color
+        if (hsvValues[0]<=360 && hsvValues[0]>=275) {
+            color = 1;
+            colorString = "Red";
+            telemetry.addData("Color:", "Red");
+        }
+        else if (hsvValues[0]>=175 && hsvValues[0]<=250) {
+            color = 2;
+            colorString = "Blue";
+            telemetry.addData("Color:", "Blue");
+        }
+        else if (hsvValues[0]<=125 && hsvValues[0]>=60) {
+            color = 3;
+            colorString = "Black";
+
+            telemetry.addData("Color:", "Black");
+        }
+        else {
+            color = 0;
+            colorString = "None";
+
+            telemetry.addData("Color:", "No color detected.");
+        }
+        return colorString;
+
     }
 
-}
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

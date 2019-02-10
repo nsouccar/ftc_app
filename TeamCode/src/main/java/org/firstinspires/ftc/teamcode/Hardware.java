@@ -48,12 +48,12 @@ public class Hardware
     //public DcMotor  collectorArm     = null;
     //public DcMotor  collectorDrum    = null;
     public DcMotor  lift        = null;
-    public DcMotor  bucketArm    = null;
+   // public DcMotor  bucketArm    = null;
     public CRServo  latch       = null;
-    public Servo    bucketBox   = null;
-    public DcMotor bucketArm2   = null;
-    public DcMotor winch        = null;
-    public DcMotor collector    = null;
+   // public Servo    bucketBox   = null;
+    //public DcMotor bucketArm2   = null;
+   // public DcMotor winch        = null;
+    //public DcMotor collector    = null;
 
 
     public static final double COLLECTOR_UP_POWER    =  1 ;
@@ -131,10 +131,10 @@ public class Hardware
         //collectorArm = hwMap.get(DcMotor.class, "collector_arm");
         //collectorDrum = hwMap.get(DcMotor.class, "collector_drum");
         lift = hwMap.get(DcMotor.class, "lift");
-        bucketArm = hwMap.get(DcMotor.class, "bucket_arm");
-        bucketArm2 = hwMap.get(DcMotor.class, "bucket_arm2");
-        winch      = hwMap.get(DcMotor.class, "winch");
-        collector  = hwMap.get(DcMotor.class, "collector");
+        //bucketArm = hwMap.get(DcMotor.class, "bucket_arm");
+       // bucketArm2 = hwMap.get(DcMotor.class, "bucket_arm2");
+        //winch      = hwMap.get(DcMotor.class, "winch");
+        //collector  = hwMap.get(DcMotor.class, "collector");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -144,17 +144,17 @@ public class Hardware
         //collectorArm.setDirection(DcMotor.Direction.REVERSE);
         //collectorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        winch.setDirection(DcMotor.Direction.REVERSE);
-        collector.setDirection(DcMotor.Direction.REVERSE);
+        //winch.setDirection(DcMotor.Direction.REVERSE);
+        //collector.setDirection(DcMotor.Direction.REVERSE);
 
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        bucketArm.setDirection(DcMotor.Direction.REVERSE);
-        bucketArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //bucketArm.setDirection(DcMotor.Direction.REVERSE);
+        //bucketArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        bucketArm2.setDirection(DcMotor.Direction.FORWARD);
-        bucketArm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //bucketArm2.setDirection(DcMotor.Direction.FORWARD);
+        //bucketArm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Set all motors to zero power
@@ -163,10 +163,10 @@ public class Hardware
         //collectorArm.setPower(0);
         //collectorDrum.setPower(0);
         lift.setPower(0);
-        bucketArm.setPower(0);
-        bucketArm2.setPower(0);
-        winch.setPower(0);
-        collector.setPower(0);
+        //bucketArm.setPower(0);
+        //bucketArm2.setPower(0);
+        //winch.setPower(0);
+        //collector.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -175,17 +175,17 @@ public class Hardware
         //collectorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //collectorDrum.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bucketArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bucketArm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        collector.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //bucketArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //bucketArm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //collector.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         latch  = hwMap.get(CRServo.class, "latch");
         latch.setPower(0.0);
-        bucketBox  = hwMap.get(Servo.class, "bucket_box");
-        bucketBox.setDirection(Servo.Direction.REVERSE);
-        bucketBox.setPosition(BUCKET_DOOR_CLOSED);
+        //bucketBox  = hwMap.get(Servo.class, "bucket_box");
+        //bucketBox.setDirection(Servo.Direction.REVERSE);
+        //bucketBox.setPosition(BUCKET_DOOR_CLOSED);
 
     }
     public void autoInit(HardwareMap otherHwMap) {
